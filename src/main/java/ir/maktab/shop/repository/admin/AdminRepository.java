@@ -9,7 +9,8 @@ public class AdminRepository implements UserInterface<Admin> {
 
     @Override
     public int save(Admin admin) {
-        return 0;
+        String sql="insert into admin";
+        Co
     }
 
     @Override
