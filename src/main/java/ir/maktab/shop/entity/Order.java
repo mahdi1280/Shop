@@ -7,6 +7,13 @@ public class Order {
     private Customer customer;
     private ShoppingCard shoppingCard;
 
+    public Order(int id, Product product, Customer customer, ShoppingCard shoppingCard) {
+        this.id = id;
+        this.product = product;
+        this.customer = customer;
+        this.shoppingCard = shoppingCard;
+    }
+
     public int getId() {
         return id;
     }

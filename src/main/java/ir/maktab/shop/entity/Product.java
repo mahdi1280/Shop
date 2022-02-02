@@ -9,6 +9,18 @@ public class Product {
     private int qty;
     private int price;
 
+    public Product(int id) {
+        this.id = id;
+    }
+
+    public Product(String name, String description, Category category, int qty, int price) {
+        this.name = name;
+        this.description = description;
+        this.category = category;
+        this.qty = qty;
+        this.price = price;
+    }
+
     public int getId() {
         return id;
     }

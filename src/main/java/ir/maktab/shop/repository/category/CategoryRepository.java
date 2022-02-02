@@ -16,12 +16,19 @@ public class CategoryRepository implements BaseRepository<Category> {
 
     @Override
     public int save(Category category) throws SQLException {
-        String sql="insert into category(title, description, category_id) values (?,?,?);";
+        String sql;
+        if(category.getCategory()==null){
+             sql="insert into category(title, description) values (?,?);";
+
+        }else {
+             sql="insert into category(title, description, category_id) values (?,?,?);";
+        }
         PreparedStatement preparedStatement = MyConnection.getConnection().prepareStatement(sql
         , Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setString(1,category.getTitle());
         preparedStatement.setString(2,category.getDescription());
-        preparedStatement.setInt(3,category.getCategory() == null ? 0 : category.getCategory().getId());
+        if(category.getCategory()!= null)
+            preparedStatement.setInt(3,category.getCategory().getId());
         preparedStatement.execute();
         ResultSet resultSet = preparedStatement.getGeneratedKeys();
         resultSet.next();

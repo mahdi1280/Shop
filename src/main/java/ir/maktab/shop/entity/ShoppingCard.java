@@ -8,6 +8,10 @@ public class ShoppingCard {
     private Date date;
     private boolean payed;
 
+    public ShoppingCard(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }
