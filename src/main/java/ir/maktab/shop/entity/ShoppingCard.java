@@ -7,9 +7,17 @@ public class ShoppingCard {
     private int id;
     private Date date;
     private boolean payed;
+    private Customer customer;
 
     public ShoppingCard(int id) {
         this.id = id;
+    }
+
+    public ShoppingCard(int id, Date date, boolean payed, Customer customer) {
+        this.id = id;
+        this.date = date;
+        this.payed = payed;
+        this.customer = customer;
     }
 
     public int getId() {
@@ -34,6 +42,14 @@ public class ShoppingCard {
 
     public void setPayed(boolean payed) {
         this.payed = payed;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     @Override

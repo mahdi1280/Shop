@@ -85,7 +85,7 @@ public class CustomerRepository implements CustomerInterface {
         preparedStatement.setString(2,password);
         ResultSet resultSet = preparedStatement.executeQuery();
         if(resultSet.next())
-            createCustomer(resultSet);
+            return createCustomer(resultSet);
         throw new NotFoundException("customer not found");
     }
 
@@ -94,7 +94,7 @@ public class CustomerRepository implements CustomerInterface {
                 resultSet.getInt("id")
                 ,resultSet.getString("username")
                 ,resultSet.getString("password")
-                ,resultSet.getString("nationalcode")
+                ,resultSet.getString("address")
         );
     }
 }

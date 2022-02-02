@@ -1,14 +1,13 @@
 package ir.maktab.shop;
 
 import ir.maktab.shop.customeexception.NotFoundException;
-import ir.maktab.shop.entity.Admin;
-import ir.maktab.shop.entity.Category;
-import ir.maktab.shop.entity.Customer;
-import ir.maktab.shop.entity.Product;
+import ir.maktab.shop.entity.*;
 import ir.maktab.shop.service.admin.AdminService;
 import ir.maktab.shop.service.category.CategoryService;
 import ir.maktab.shop.service.customer.CustomerService;
+import ir.maktab.shop.service.order.OrderService;
 import ir.maktab.shop.service.product.ProductService;
+import ir.maktab.shop.service.shoppingcard.ShoppingCardService;
 
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -22,7 +21,8 @@ public class Main {
     private static Scanner scanner = new Scanner(System.in);
     private static Admin admin;
     private static Customer customer;
-
+    private static final OrderService orderService=new OrderService();
+    private static final ShoppingCardService shoppingCartService=new ShoppingCardService();
     public static void main(String[] args) throws SQLException {
 
         showMenuLogin();
@@ -36,8 +36,57 @@ public class Main {
 
     }
 
-    private static void customerMenu() {
+    private static void customerMenu() throws SQLException {
+        boolean state=true;
+        showMenuCustomer();
+        while (state){
+            switch (getNumber()){
+                case 1:
+                    productService.findAll();
+                    Product product=getProduct();
+                    orderService.save(createOrder(product));
+                    break;
+                case 2:
+                    categoryService.findAll();
+                    Category category=getCategory();
+                    productService.findByCategory(category.getId());
+                    break;
+                case 3:
+                    ShoppingCard shoppingCard = shoppingCartService.lastOneShippingCardByUserId(customer.getId());
+                    orderService.findByShoppingCart(shoppingCard.getId());
+                    break;
+                case 4:
+                    state = false;
+                    break;
+                default:
+                    System.out.println("wrong!");
+                    break;
+            }
+        }
+    }
 
+    private static Product getProduct() {
+        System.out.println("please enter product: ");
+        while (true) {
+            try {
+            int productId = getNumber();
+               Product product= productService.findById(productId);
+               return product;
+            }catch (NotFoundException | SQLException n){
+                System.out.println(n.getMessage());
+            }
+        }
+    }
+
+    private static Order createOrder(Product product) throws SQLException {
+        return new Order(0,product,customer,shoppingCartService.lastOneShippingCardByUserId(customer.getId()));
+    }
+
+    private static void showMenuCustomer() {
+        System.out.println("1.bye product");
+        System.out.println("2.search by category");
+        System.out.println("3.get orders");
+        System.out.println("4.exit");
     }
 
     private static void adminMenu() throws SQLException {

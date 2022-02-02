@@ -38,8 +38,10 @@ create table if not exists shopping_card
 (
     id    serial primary key,
     date  date,
-    payed boolean
-);
+    payed boolean,
+    customer_id integer,
+    constraint fk_customer_id foreign key (customer_id) references customer (id)
+    );
 create table if not exists orders
 (
     id               serial primary key,
