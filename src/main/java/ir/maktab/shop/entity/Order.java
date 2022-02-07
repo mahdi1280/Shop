@@ -5,10 +5,12 @@ public class Order {
     private int id;
     private Product product;
     private Customer customer;
+    private int qty;
     private ShoppingCard shoppingCard;
 
-    public Order(int id, Product product, Customer customer, ShoppingCard shoppingCard) {
+    public Order(int id,int qty, Product product, Customer customer, ShoppingCard shoppingCard) {
         this.id = id;
+        this.qty = qty;
         this.product = product;
         this.customer = customer;
         this.shoppingCard = shoppingCard;
@@ -44,6 +46,15 @@ public class Order {
 
     public void setShoppingCard(ShoppingCard shoppingCard) {
         this.shoppingCard = shoppingCard;
+    }
+
+
+    public int getQty() {
+        return qty;
+    }
+
+    public void setQty(int qty) {
+        this.qty = qty;
     }
 
     @Override

@@ -9,4 +9,6 @@ import java.util.List;
 public interface ProductInterface extends BaseRepository<Product> {
 
     List<Product> findByCategory(int categoryId) throws SQLException;
+
+    List<Product> findByName(String text) throws SQLException;
 }

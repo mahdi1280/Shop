@@ -11,6 +11,7 @@ public class ProductService extends ShopService<Product, ProductRepository> {
 
     private ProductRepository productRepository;
 
+
     public ProductService() {
         super(new ProductRepository());
         productRepository=new ProductRepository();
@@ -21,5 +22,13 @@ public class ProductService extends ShopService<Product, ProductRepository> {
             for (Product product : byCategory) {
                 System.out.println(product.toString());
             }
+    }
+
+    public List<Product> findAllProduct() throws SQLException {
+        return productRepository.findAll();
+    }
+
+    public List<Product> findByName(String text) throws SQLException {
+        return productRepository.findByName(text);
     }
 }

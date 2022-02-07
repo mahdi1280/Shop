@@ -1,6 +1,7 @@
 package ir.maktab.shop.service.order;
 
 import ir.maktab.shop.entity.Order;
+import ir.maktab.shop.entity.ShoppingCard;
 import ir.maktab.shop.repository.order.OrderRepository;
 import ir.maktab.shop.service.ShopService;
 
@@ -9,7 +10,8 @@ import java.util.List;
 
 public class OrderService extends OrderServiceAbstarct {
 
-    private final OrderRepository orderRepository=new OrderRepository();
+    private final OrderRepository orderRepository = new OrderRepository();
+
     public OrderService() {
         super(new OrderRepository());
     }
@@ -17,8 +19,15 @@ public class OrderService extends OrderServiceAbstarct {
     @Override
     public void findByShoppingCart(int id) throws SQLException {
         List<Order> allByShoppingCard = orderRepository.findAllByShoppingCard(id);
-        for (Order or :allByShoppingCard) {
+        for (Order or : allByShoppingCard) {
             System.out.println(or.toString());
         }
     }
+
+    @Override
+    public List<Order> getByShoppingCart(int id) throws SQLException {
+        return orderRepository.findAllByShoppingCard(id);
+    }
+
+
 }

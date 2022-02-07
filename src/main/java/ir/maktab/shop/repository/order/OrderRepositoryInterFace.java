@@ -9,4 +9,8 @@ import java.util.List;
 public interface OrderRepositoryInterFace extends BaseRepository<Order> {
 
     List<Order> findAllByShoppingCard(int id) throws SQLException;
+
+    Double getAllAmount(int id) throws SQLException;
+
+
 }

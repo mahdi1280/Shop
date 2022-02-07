@@ -4,6 +4,7 @@ import ir.maktab.shop.config.MyConnection;
 import ir.maktab.shop.customeexception.NotFoundException;
 import ir.maktab.shop.entity.Category;
 import ir.maktab.shop.entity.Product;
+import ir.maktab.shop.repository.category.CategoryRepository;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,18 +15,19 @@ import java.util.List;
 
 public class ProductRepository implements ProductInterface {
 
+    private final CategoryRepository categoryRepository = new CategoryRepository();
 
     @Override
     public int save(Product product) throws SQLException {
-        String sql="insert into product(name, description, category_id, qty, price) values \n" +
+        String sql = "insert into product(name, description, category_id, qty, price) values \n" +
                 "(?,?,?,?,?);";
         PreparedStatement preparedStatement = MyConnection.getConnection().prepareStatement(sql
-        , Statement.RETURN_GENERATED_KEYS);
-        preparedStatement.setString(1,product.getName());
-        preparedStatement.setString(2,product.getDescription());
-        preparedStatement.setInt(3,product.getCategory().getId());
-        preparedStatement.setInt(4,product.getQty());
-        preparedStatement.setInt(5,product.getPrice());
+                , Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setString(1, product.getName());
+        preparedStatement.setString(2, product.getDescription());
+        preparedStatement.setInt(3, product.getCategory().getId());
+        preparedStatement.setInt(4, product.getQty());
+        preparedStatement.setInt(5, product.getPrice());
         preparedStatement.execute();
         ResultSet preparedStatementGeneratedKeys = preparedStatement.getGeneratedKeys();
         preparedStatementGeneratedKeys.next();
@@ -39,16 +41,15 @@ public class ProductRepository implements ProductInterface {
 
     @Override
     public List<Product> findAll() throws SQLException {
-      String sql="select * from product";
+        String sql = "select * from product";
         PreparedStatement preparedStatement = MyConnection.getConnection().prepareStatement(sql);
         ResultSet resultSet = preparedStatement.executeQuery();
-        List<Product> products=new ArrayList<>();
-        while (resultSet.next()){
+        List<Product> products = new ArrayList<>();
+        while (resultSet.next()) {
             products.add(createProduct(resultSet));
         }
-return products;
+        return products;
     }
-
 
 
     @Override
@@ -58,23 +59,36 @@ return products;
 
     @Override
     public Product findById(int id) throws SQLException {
-        String sql="select * from product where id=?";
+        String sql = "select * from product where id=?";
         PreparedStatement preparedStatement = MyConnection.getConnection().prepareStatement(sql);
-        preparedStatement.setInt(1,id);
+        preparedStatement.setInt(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
-        if(resultSet.next())
+        if (resultSet.next())
             return createProduct(resultSet);
         throw new NotFoundException("product not found Exception");
     }
 
     @Override
     public List<Product> findByCategory(int categoryId) throws SQLException {
-        String sql="select * from product where category_id=?";
+        String sql = "select * from product where category_id=?";
         PreparedStatement preparedStatement = MyConnection.getConnection().prepareStatement(sql);
-        preparedStatement.setInt(1,categoryId);
+        preparedStatement.setInt(1, categoryId);
         ResultSet resultSet = preparedStatement.executeQuery();
-        List<Product> products=new ArrayList<>();
-        while (resultSet.next()){
+        List<Product> products = new ArrayList<>();
+        while (resultSet.next()) {
+            products.add(createProduct(resultSet));
+        }
+        return products;
+    }
+
+    @Override
+    public List<Product> findByName(String text) throws SQLException {
+        String sql = "select * from product where name like ?";
+        PreparedStatement preparedStatement = MyConnection.getConnection().prepareStatement(sql);
+        preparedStatement.setString(1, "%" + text + "%");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        List<Product> products = new ArrayList<>();
+        while (resultSet.next()) {
             products.add(createProduct(resultSet));
         }
         return products;
@@ -84,11 +98,11 @@ return products;
     private Product createProduct(ResultSet resultSet) throws SQLException {
         return new Product(
                 resultSet.getInt("id")
-                ,resultSet.getString("name")
-                ,resultSet.getString("description")
-                ,new Category(resultSet.getInt("category_id"))
-                ,resultSet.getInt("qty")
-                ,resultSet.getInt("price")
+                , resultSet.getString("name")
+                , resultSet.getString("description")
+                , categoryRepository.findById(resultSet.getInt("category_id"))
+                , resultSet.getInt("qty")
+                , resultSet.getInt("price")
         );
     }
 }

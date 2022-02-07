@@ -72,6 +72,7 @@ public class CustomerRepository implements CustomerInterface {
     private Order createOrder(ResultSet resultSet) throws SQLException {
         return new Order(
                 resultSet.getInt("id")
+                ,  resultSet.getInt("qty")
         ,new Product(resultSet.getInt("product_id"))
         ,new Customer(resultSet.getInt("customer_id"))
         ,new ShoppingCard(resultSet.getInt("shopping_card_id")));

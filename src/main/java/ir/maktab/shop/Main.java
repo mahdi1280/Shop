@@ -18,7 +18,7 @@ public class Main {
     private static final CustomerService customerService = new CustomerService();
     private static final ProductService productService = new ProductService();
     private static final CategoryService categoryService = new CategoryService();
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
     private static Admin admin;
     private static Customer customer;
     private static final OrderService orderService=new OrderService();
@@ -79,7 +79,7 @@ public class Main {
     }
 
     private static Order createOrder(Product product) throws SQLException {
-        return new Order(0,product,customer,shoppingCartService.lastOneShippingCardByUserId(customer.getId()));
+        return new Order(0,1,product,customer,shoppingCartService.lastOneShippingCardByUserId(customer.getId()));
     }
 
     private static void showMenuCustomer() {

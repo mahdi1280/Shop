@@ -45,6 +45,7 @@ create table if not exists shopping_card
 create table if not exists orders
 (
     id               serial primary key,
+    qty integer ,
     product_id       integer,
     customer_id      integer,
     shopping_card_id integer,
