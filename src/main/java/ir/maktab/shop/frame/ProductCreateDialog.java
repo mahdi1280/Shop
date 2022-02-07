@@ -34,6 +34,7 @@ public class ProductCreateDialog extends JDialog implements ActionListener {
     private final List<Category> categoryList;
 
     private ProductCreateDialog() throws SQLException {
+        this.setTitle("Create Product");
         categoryList = categoryRepository.findAll();
         category = new JComboBox<>(getTitle(categoryList));
         this.setLayout(new GridLayout(6, 2, 5, 5));
@@ -54,9 +55,8 @@ public class ProductCreateDialog extends JDialog implements ActionListener {
     }
 
     private String[] getTitle(List<Category> categories) {
-        String[] title = new String[categories.size() + 1];
-        title[categories.size()] = "";
-        for (int i = 0; i < title.length - 1; i++) {
+        String[] title = new String[categories.size()];
+        for (int i = 0; i < title.length; i++) {
             title[i] = categories.get(i).getTitle();
         }
         return title;
@@ -83,8 +83,8 @@ public class ProductCreateDialog extends JDialog implements ActionListener {
                     , Integer.parseInt(qtyTxt.getText())
                     , Integer.parseInt(priceTxt.getText())
             ));
-            this.setVisible(false);
             JOptionPane.showMessageDialog(this, "save successfuly");
+            this.setVisible(false);
         } catch (SQLException e) {
             e.printStackTrace();
         }
