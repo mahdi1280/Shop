@@ -1,6 +1,7 @@
 package ir.maktab.shop.frame;
 
 import ir.maktab.shop.entity.Customer;
+import ir.maktab.shop.entity.Product;
 import ir.maktab.shop.repository.product.ProductModel;
 import ir.maktab.shop.service.product.ProductService;
 
@@ -9,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.List;
 
 public class CustomerFrame extends JFrame implements ActionListener {
 
@@ -65,11 +67,19 @@ public class CustomerFrame extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this,"not selected product");
             else{
                 FrameDialogBuyProduct.createObject(productModel.getProducts().get(table.getSelectedRow()),customer );
+                try {
+                    productModel.setProducts(productService.findByName(search.getText()));
+                    productModel.setProducts(productService.findAllProduct());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
         if(orderBtn == actionEvent.getSource()){
             try {
                 FrameDialogShoppingCart.createObject(customer);
+                productModel.setProducts(productService.findByName(search.getText()));
+                productModel.setProducts(productService.findAllProduct());
             } catch (SQLException e) {
                 e.printStackTrace();
             }

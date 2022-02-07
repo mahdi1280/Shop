@@ -3,6 +3,7 @@ package ir.maktab.shop.frame;
 import ir.maktab.shop.entity.Customer;
 import ir.maktab.shop.entity.Order;
 import ir.maktab.shop.entity.Product;
+import ir.maktab.shop.repository.product.ProductRepository;
 import ir.maktab.shop.service.order.OrderService;
 import ir.maktab.shop.service.shoppingcard.ShoppingCardService;
 
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 
 public class FrameDialogBuyProduct extends JDialog implements ActionListener {
 
+    private final ProductRepository productRepository=new ProductRepository();
     private final Product product;
     private final JTextField countTxt=new JTextField();
     private final JLabel countLabel = new JLabel("count: ");
@@ -71,7 +73,13 @@ public class FrameDialogBuyProduct extends JDialog implements ActionListener {
                 return;
             }
             try {
+                if(product.getQty()< Integer.parseInt(countTxt.getText())) {
+                    JOptionPane.showMessageDialog(this, "Not enughe money");
+                    return;
+                }
                 orderService.save(createOrder(product));
+                product.setQty(product.getQty() - Integer.parseInt(countTxt.getText()));
+                productRepository.update(product);
                 JOptionPane.showMessageDialog(this,"buy is saved.");
                 setVisible(false);
             } catch (SQLException e) {
@@ -81,7 +89,9 @@ public class FrameDialogBuyProduct extends JDialog implements ActionListener {
     }
 
     private Order createOrder(Product product) throws SQLException {
-        return new Order(0,Integer.parseInt(countTxt.getText()),product,customer,shoppingCardService.lastOneShippingCardByUserId(customer.getId()));
+        return new Order(0
+                ,Integer.parseInt(countTxt.getText())
+                ,product,customer,shoppingCardService.lastOneShippingCardByUserId(customer.getId()));
     }
 
     private void getCount() {

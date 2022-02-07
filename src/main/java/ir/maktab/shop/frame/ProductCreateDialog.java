@@ -51,6 +51,7 @@ public class ProductCreateDialog extends JDialog implements ActionListener {
         this.add(create);
         create.addActionListener(this);
         this.pack();
+        this.setModal(true);
         this.setVisible(true);
     }
 

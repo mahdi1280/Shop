@@ -40,6 +40,7 @@ public class ProductFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent actionEvent) {
         try {
             ProductCreateDialog.createObject();
+            productModel.setProducts(productRepository.findByName("asd"));
             productModel.setProducts(productRepository.findAll());
         } catch (SQLException e) {
             e.printStackTrace();

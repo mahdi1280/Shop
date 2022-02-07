@@ -35,8 +35,13 @@ public class ProductRepository implements ProductInterface {
     }
 
     @Override
-    public void update(Product product) {
-
+    public void update(Product product) throws SQLException {
+        String sql = "update product set qty = ? where id=?";
+        PreparedStatement preparedStatement = MyConnection.getConnection().prepareStatement(sql
+                , Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setInt(1, product.getQty());
+        preparedStatement.setInt(2, product.getId());
+        preparedStatement.execute();
     }
 
     @Override
