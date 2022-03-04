@@ -1,30 +1,25 @@
 package ir.maktab.shop.entity;
 
-public class Customer extends User{
+import lombok.*;
+
+import javax.persistence.Entity;
+
+@ToString
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+public class Customer extends User {
 
     private String address;
 
-    public Customer(int id, String username, String password, String address) {
-        super(id, username, password);
-        this.address = address;
-    }
-
-    public Customer(int id) {
+    public Customer(int id){
         super(id);
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "address='" + address + '\'' +
-                '}';
+    public Customer(int id,String username,String password,String address){
+        super(id,username,password);
+        this.address=address;
     }
 }

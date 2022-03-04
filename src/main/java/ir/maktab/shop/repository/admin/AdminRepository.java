@@ -3,7 +3,9 @@ package ir.maktab.shop.repository.admin;
 import ir.maktab.shop.config.MyConnection;
 import ir.maktab.shop.customeexception.NotFoundException;
 import ir.maktab.shop.entity.Admin;
+import ir.maktab.shop.repository.session.MySession;
 import ir.maktab.shop.repository.user.UserInterface;
+import org.hibernate.Session;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,81 +18,52 @@ public class AdminRepository implements UserInterface<Admin> {
 
     @Override
     public int save(Admin admin) throws SQLException {
-        String sql="insert into admin(username, password, nationalcode) values (?,?,?);";
-        PreparedStatement preparedStatement = MyConnection.getConnection().prepareStatement(sql
-        , Statement.RETURN_GENERATED_KEYS);
-        preparedStatement.setString(1,admin.getUsername());
-        preparedStatement.setString(2,admin.getPassword());
-        preparedStatement.setString(3,admin.getNationalCode());
-        preparedStatement.executeUpdate();
-        ResultSet resultSet = preparedStatement.getGeneratedKeys();
-        resultSet.next();
-        return resultSet.getInt(1);
+        Session session = MySession.getSession();
+        session.beginTransaction();
+        Long id=(Long)session.save(admin);
+        session.getTransaction().commit();
+        return Math.toIntExact(id);
     }
 
     @Override
     public void update(Admin admin) throws SQLException {
-        String sql="update admin set username=? , password=? ,nationalcode=? where id=?";
-        PreparedStatement preparedStatement = MyConnection.getConnection().prepareStatement(sql);
-        preparedStatement.setString(1,admin.getUsername());
-        preparedStatement.setString(2,admin.getPassword());
-        preparedStatement.setString(3,admin.getNationalCode());
-        preparedStatement.setInt(4,admin.getId());
-        preparedStatement.executeUpdate();
-        preparedStatement.close();
+        Session session = MySession.getSession();
+        session.beginTransaction();
+        session.update(admin);
+        session.getTransaction().commit();
     }
 
     @Override
     public List<Admin> findAll() throws SQLException {
-        String sql="select * from admin;";
-        PreparedStatement preparedStatement = MyConnection.getConnection().prepareStatement(sql);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        List<Admin> admins=new ArrayList<>();
-        while (resultSet.next()){
-           admins.add(createAdmin(resultSet));
-        }
-        return admins;
+        Session session = MySession.getSession();
+       return session.createQuery("select a from Admin a").getResultList();
     }
 
     @Override
     public void delete(int id) throws SQLException {
-        String sql="delete from admin where id=?;";
-        PreparedStatement preparedStatement = MyConnection.getConnection().prepareStatement(sql);
-        preparedStatement.setInt(1,id);
-        preparedStatement.executeUpdate();
-        preparedStatement.close();
+        Session session = MySession.getSession();
+        Admin admin = session.find(Admin.class, id);
+        session.delete(admin);
     }
 
     @Override
     public Admin findById(int id) throws SQLException {
-        String sql="select * from admin where id=?;";
-        PreparedStatement preparedStatement = MyConnection.getConnection().prepareStatement(sql);
-        preparedStatement.setInt(1,id);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if(resultSet.next())
-            return createAdmin(resultSet);
-        throw new NotFoundException("not found admin");
+        Session session = MySession.getSession();
+        Admin admin = session.find(Admin.class, id);
+        if(admin==null)
+            throw new NotFoundException("not found admin");
+        return admin;
     }
 
     @Override
     public Admin login(String username, String password) throws SQLException {
-        String sql="select * from admin where username=? and password=?;";
-        PreparedStatement preparedStatement = MyConnection.getConnection().prepareStatement(sql);
-        preparedStatement.setString(1,username);
-        preparedStatement.setString(2,password);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if(resultSet.next())
-            return createAdmin(resultSet);
-        throw new NotFoundException("not found Admin Exception");
-    }
-
-
-    private Admin createAdmin(ResultSet resultSet) throws SQLException {
-        return new Admin(
-                resultSet.getInt("id")
-                ,resultSet.getString("username")
-                ,resultSet.getString("password")
-                ,resultSet.getString("nationalcode")
-        );
+        Session session = MySession.getSession();
+        List<Admin> list = session.createQuery("select a from Admin a where a.password=:password and a.username=:username")
+                .setParameter("password", password)
+                .setParameter("username", username)
+                .list();
+        if(list==null || list.size()==0)
+            throw new NotFoundException("not found Admin Exception");
+       return list.get(0);
     }
 }
