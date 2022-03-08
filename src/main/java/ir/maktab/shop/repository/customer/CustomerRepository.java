@@ -13,32 +13,38 @@ public class CustomerRepository implements CustomerInterface {
 
     @Override
     public int save(Customer customer) throws SQLException {
-
         Session session = MySession.getSession();
         session.beginTransaction();
-        Long id=(Long) session.save(customer);
+        Integer id=(Integer) session.save(customer);
         session.getTransaction().commit();
-        return Math.toIntExact(id);
+        return id;
     }
 
     @Override
     public void update(Customer customer) {
-
+        Session session = MySession.getSession();
+        session.beginTransaction();
+        session.update(customer);
+        session.getTransaction().commit();
     }
 
     @Override
     public List<Customer> findAll() {
-        return null;
+        Session session=MySession.getSession();
+        return session.createQuery("select c from Customer c", Customer.class).list();
     }
 
     @Override
     public void delete(int id) {
-
+        Session session=MySession.getSession();
+        Customer customer = session.find(Customer.class, id);
+        session.beginTransaction();
+        session.delete(customer);
+        session.getTransaction().commit();
     }
 
     @Override
     public Customer findById(int id) throws SQLException {
-
         Session session = MySession.getSession();
         Customer customer = session.find(Customer.class, id);
         if (customer==null)
@@ -47,17 +53,17 @@ public class CustomerRepository implements CustomerInterface {
     }
 
     @Override
-    public List<Order> findShoppingCardByUserId(int id) throws SQLException {
+    public List<Order> findShoppingCardByUserId(int id) {
         Session session = MySession.getSession();
-        return session.createNativeQuery("select * from orders where customer_id=:id;")
-                .setParameter("id", id).getResultList();
+        return session.createNativeQuery("select * from orders where customer_id=:id",Order.class)
+                .setParameter("id", id)
+                .getResultList();
     }
 
     @Override
-    public Customer login(String username, String password) throws SQLException {
-
+    public Customer login(String username, String password) {
         Session session = MySession.getSession();
-        List<Customer> list = session.createQuery("select c from Customer c where c.username=:username and c.password=:password")
+        List<Customer> list = session.createQuery("select c from Customer c where c.username=:username and c.password=:password",Customer.class)
                 .setParameter("username", username)
                 .setParameter("password", password)
                 .list();
